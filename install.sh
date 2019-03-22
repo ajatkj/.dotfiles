@@ -16,7 +16,6 @@ cd $HOME/.dotfiles
 _ignore=(. .. .git .gitignore)
 _bashonly=(.profile.bash.opts .inputrc)
 _kshonly=()
-_bancsonly=(.profile.cobmods .cobterminfo .ora .mailrc)
 for _file in .*; do
    printf '%s\n' ${_ignore[@]} | grep "^${_file}$" > /dev/null 2>&1
    if [ $? -eq 0 ]; then
@@ -31,10 +30,6 @@ for _file in .*; do
    fi
    printf '%s\n' ${_bashonly[@]} | grep "^${_file}$" > /dev/null 2>&1
    if [ $? -eq 0 -a $_shell == ksh ]; then
-      continue
-   fi
-   printf '%s\n' ${_bancsonly[@]} | grep "^${_file}$" > /dev/null 2>&1
-   if [[ $? == 0 ]] && ! [[ $LOGNAME =~ fns ]]; then
       continue
    fi
    if [ -h $HOME/$_file ]; then
