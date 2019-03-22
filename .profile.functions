@@ -1,3 +1,8 @@
+#----------------------------------------------------------------#
+# Name : .profile.functions                                      #
+# Author : Ankit Jain <ajatkj@yahoo.co.in>                       #
+# Desc : Some important functions                                #
+#----------------------------------------------------------------#
 #----- C U S T O M  F U N C T I O N S -----#
 up() {
   for D in $(seq 1 $1);
@@ -55,30 +60,4 @@ extract() {
 
 envv(){
     echo -e "${1//:/\\n}"
-}
-
-lsi(){
-   patf=""
-   for pat in "$@"; do
-      if [ "$patf" != "" ]; then
-         patf=$patf"|"$pat
-      else
-         patf=$pat"\>"
-      fi
-   done
-   ls $(ls -p | grep -v / | grep -v -E $patf)
-   patf=""
-}
-
-lsit(){
-   patf=""
-   for pat in "$@"; do
-      if [ "$patf" != "" ]; then
-         patf=$patf"|"$pat
-      else
-         patf=$pat"\>"
-      fi
-   done
-   ls -lrt $(ls -p | grep -v / | grep -v -E $patf)
-   patf=""
 }

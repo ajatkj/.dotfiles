@@ -1,3 +1,8 @@
+#----------------------------------------------------------------#
+# Name : .profile.prompt                                         #
+# Author : Ankit Jain <ajatkj@yahoo.co.in>                       #
+# Desc : Customize PS1                                           #
+#----------------------------------------------------------------#
 # Make sure colors are loaded before sourcing this file
 # If not loaded, then use defaults
 if [[ -z $_usecolor ]] || [[ $_usecolor == 0 ]]; then
@@ -14,16 +19,11 @@ if [[ -z $_usecolor ]] || [[ $_usecolor == 0 ]]; then
    _grey=7
    _white=15
 fi
-if [ ! -z $KSH_VERSION ]; then
-   _shell=ksh
-fi
-if [ ! -z $BASH_VERSION ]; then
-   _shell=bash
-fi
+export SHELLNAME=$(echo ${0#-}) # echo $0 will return name of the shell as -ksh or -bash, #- will remove -
 
 # Session file for storing temporary session details
-mkdir -p /tmp/$LOGNAME
-_ttyfile=/tmp/$LOGNAME/tty.$(tty | cut -d"/" -f4).$$
+mkdir -p /tmp/$USER
+_ttyfile=/tmp/$USER/tty.$USER.$$
 if [ -f $_ttyfile ]; then
    rm -f $_ttyfile
 fi
@@ -34,12 +34,12 @@ touch $_ttyfile
 _ipusers=(dockeradm ankitj root kubenode all)
 _showip=no
 for _user in "${_ipusers[@]}"; do
-   if [ $_user == "all" -o $LOGNAME == "$_user" ]; then
+   if [ $_user == "all" -o $USER == "$_user" ]; then
       _showip=yes
    fi
 done
 
-case $_shell in 
+case $SHELLNAME in 
     ksh) export PS1="\$(_prompt)" ;;
     bash) export PROMPT_COMMAND=_prompt ;;
     *) break;;
@@ -50,7 +50,7 @@ _tstart="\033]0;"
 _tend="\007"
 # Using different escape sequences for ksh since it was giving issues
 # for folders starting with a number
-if [ $_shell == ksh ]; then
+if [ $SHELLNAME == ksh ]; then
    _s="\0001"
    _e="\0002"
 else
@@ -87,13 +87,13 @@ if [ $? -eq 0 ]; then
 else
    which ifconfig > /dev/null 2>&1
    if [ $? -eq 0 ]; then
-      _ip=$(ifconfig eth0 | grep 'inet ' | awk '{print $2}' | cut -d"." -f4)
+      _ip=$(ifconfig | grep -Eo 'inet (addr:)?([0-9]*\.){3}[0-9]*' | grep -Eo '([0-9]*\.){3}[0-9]*' | grep -v '127.')
    else
       _showip=no
    fi
 fi
 # GET HOSTNAME IF AVAILABLE
-_logname=${LOGNAME}
+_logname=${USER}
 which hostname > /dev/null 2>&1 # show host name if available
 if [ $? -eq 0 ]; then
    _hostname=$(hostname)
@@ -212,10 +212,10 @@ function _prompt
        _errtext=""
        _COLOR1="${_GREEN}"
     else
-       if [ ${_shell} == bash ]; then
+       if [ ${SHELLNAME} == bash ]; then
           _errtext=${_basherr}
        fi 
-       if [ ${_shell} == ksh ]; then
+       if [ ${SHELLNAME} == ksh ]; then
           _errtext=${_ksherr}
        fi 
        if [ ${_uid} -eq 0 ]; then
@@ -251,7 +251,7 @@ function _prompt
     PS1+="${_COLOR4}"           # Color
     PS1+="${_close}"            # Prompt/Closing bracket
     PS1+="${_RESET}"            # Reset all colors
-    case ${_shell} in 
+    case ${SHELLNAME} in 
         ksh) echo -e $PS1;;
         bash) export PS1;;
         *) echo -e $PS1;;

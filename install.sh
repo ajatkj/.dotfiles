@@ -1,4 +1,9 @@
 #!/usr/bin/env bash
+#----------------------------------------------------------------#
+# Name : install.sh                                              #
+# Author : Ankit Jain <ajatkj@yahoo.co.in>                       #
+# Desc : Install dot files                                       #
+#----------------------------------------------------------------#
 _script=$(basename $0)
 if [ ! -d $HOME/.dotfiles ]; then
    exit 0

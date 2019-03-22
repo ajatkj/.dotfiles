@@ -1,6 +1,11 @@
-#!/bin/bash
+#!/usr/bin/env bash
+#----------------------------------------------------------------#
+# Name : .logout                                                 #
+# Author : Ankit Jain <ajatkj@yahoo.co.in>                       #
+# Desc : Cleanup at shell exit                                   #
+#----------------------------------------------------------------#
 echo "clearing session files..."
-_ttyfile=/tmp/$LOGNAME/tty.$(tty | cut -d"/" -f4).$1
+_ttyfile=/tmp/$USER/tty.$USER.$1
 if [ -f ${_ttyfile} ]; then
    echo "deleting $_ttyfile"
    rm -f ${_ttyfile}

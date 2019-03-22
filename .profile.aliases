@@ -1,6 +1,16 @@
+#----------------------------------------------------------------#
+# Name : .profile.aliases                                        #
+# Author : Ankit Jain <ajatkj@yahoo.co.in>                       #
+# Desc : Some important aliases                                  #
+#----------------------------------------------------------------#
 #----- D E F I N E  A L I A S E S -----#
 if [ -z $SHELLNAME ]; then
    export SHELLNAME=$(echo ${0#-}) # echo $0 will return name of the shell as -ksh or -bash, #- will remove -
+fi
+if [[ $SHELLNAME == bash ]] && [[ -f $HOME/.bash_profile ]]; then
+   _profile=$HOME/.bash_profile
+else
+   _profile=$HOME/.profile
 fi
 alias ls='ls --color=auto'
 alias lls='ls -lrSh'
@@ -27,17 +37,17 @@ alias reload=". ${_profile} && echo 'Profile (${_profile}) reloaded'"
 
 alias cpuinfo='lscpu' # Get server cpu info
 
-alias profile="vim ${_profile}"
+alias profile="$EDITOR ${_profile}"
 
-alias ed='vim'
+alias ed='$EDITOR'
 
 # Configure window title for variour programs
 
 _tstart="\033]0;"
 _tend="\007"
  
-alias sqlplus='echo -ne "${_tstart}$LOGNAME - sqlplus@$ORACLE_SID${_tend}";sqlplus'
-alias sftp='echo -ne "${_tstart}$LOGNAME - sftp${_tend}";sftp'
+alias sqlplus='echo -ne "${_tstart}$USER - sqlplus@$ORACLE_SID${_tend}";sqlplus'
+alias sftp='echo -ne "${_tstart}$USER - sftp${_tend}";sftp'
 
 if [ $SHELLNAME == ksh ]; then
    alias fc='hist'

@@ -20,7 +20,7 @@ export SQLPATH=$HOME/.ora
 export HISTEDIT=vim # Used only in ksh
 export HISTTIMEFORMAT='[%y-%m-%d %H:%M:%S]' # Used only in bash
 
-_histdir=/tmp/$LOGNAME/history
+_histdir=/tmp/$USER/history
 mkdir -p ${_histdir}
 which who > /dev/null 2>&1
 if [ $? -eq 0 ]; then
@@ -32,12 +32,6 @@ else
       export HISTFILE=${_histdir}/hist.$(tty | cut -d"/" -f4).$$ 
    fi
 fi
-#----- C O B O L  R E L A T E D  M O D I F I C A T I O N S -----#
-# Load this before loading colors as this decides the final TERM value
-if [[ $LOGNAME =~ fns ]] && [[ -f $HOME/.profile.cobmods ]]; then  # if it's a BaNCS user
-   source $HOME/.profile.cobmods
-fi
-
 #----- L O A D  C O L O R S -----#
 # Make sure this is done before setting GREP_COLORS and PS1
 _supported_colors=$(tput colors)
