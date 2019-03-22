@@ -1,0 +1,66 @@
+
+#
+#
+#  Terminfo sources
+#  Copyright (C) 1984-1994 Micro Focus Ltd.
+#
+#  File: ansi.src
+#
+#  Last Modified: 95/09/15 10:45:56
+#
+#***************************************************************
+# This terminfo example is provided for use by users of Micro   
+# Focus products on the UNIX operating system.                  
+# As far as is possible this example has been tested on the     
+# named terminal.  However, Micro Focus does not guarantee      
+# that this example is full and complete.                       
+# When using tic to compile this example, ensure that the       
+# system environment variable TERMINFO is set to the path       
+# $COBDIR/terminfo so that the compiled object will be placed   
+# in the correct terminal database.                             
+#***************************************************************
+#
+#***************************************************************
+# Notes:                                                        
+#     1. when running on AIX all compiled terminfos must be in  
+#        a SVR3/SVR4 format.  Either tic these terminfos on a   
+#        SVR3/SVR4 machine and move the objects across, or      
+#        use the Micro Focus supplied utility termconv to       
+#        convert AIX compiled terminfos to the required format. 
+#***************************************************************
+ansi|ansicon|ansi80x25|Ansi standard console @(#)ansi(80x25): 3.8,
+	am, bce, eo,
+	colors#8, cols#80, it#8, lines#25, ncv#3, pairs#64,
+	acsc=0[a1fxgqh2jYk?lZm@nEqDtCu4vAwBx3, 
+	bel=^G, blink=\E[5m, bold=\E[1m, cbt=\E[Z,
+	clear=\E[2J\E[H, cr=\r, cub=\E[%p1%dD, cub1=\E[D,
+	cud=\E[%p1%dB, cud1=\E[B, cuf=\E[%p1%dC, cuf1=\E[C,
+	cup=\E[%i%p1%d;%p2%dH, cuu=\E[%p1%dA, cuu1=\E[A,
+	dch=\E[%p1%dP, dch1=\E[P, dl=\E[%p1%dM, dl1=\E[M,
+	ed=\E[J, el=\E[K, flash=^G, home=\E[H, ht=\t,
+	ich=\E[%p1%d@, ich1=\E[@, il=\E[%p1%dL, il1=\E[L,
+	ind=\E[S, indn=\E[%P1%dS, kbs=\b, kcbt=\E[Z,
+	kclr=\E[2J, kcub1=\E[D, kcud1=\E[B, kcuf1=\E[C,
+	kcuu1=\E[A, kdch1=\177, kend=\E[F, kf0=\E, kf1=\E[M,
+	kf10=\E[V, kf11=\E[W, kf12=\E[X, kf2=\E[N, kf3=\E[O,
+	kf4=\E[P, kf5=\E[Q, kf6=\E[R, kf7=\E[S, kf8=\E[T,
+	kf9=\E[U, khome=\E[H, kich1=\E[L, knp=\E[G, kpp=\E[I,
+	op=\E[37;40m, rev=\E[7m, ri=\E[T, rin=\E[S,
+	rmacs=\E[10m, rmso=\E[m, rmul=\E[0m, setb=\E[4%p1%dm,
+	setf=\E[3%p1%dm, sgr0=\E[m, smacs=\E[12m, smso=\E[7m,
+	smul=\E[4m,
+#
+AT386|at386|386AT|386at|at/386 console @(#)at386: 3.8,
+	acsc=+>\,<'0'\333a\262f\370g\361j\331k\277l\332m\300n\305q\304t\303u\264v\301w\302x\263,
+	smul=\E[4m, rmacs@, smacs@,
+	use=ansi,
+at386-24|at/386 console @(#)at386(80x24): 3.8,
+	lines#24,
+	use=at386,
+AT386-m|at386-m|at/386 console @(#)at386(mono): 3.8,
+	colors@, ncv@, pairs@, op@, setb@, setf@,
+	use=at386,
+at386-con|Unixware console @(#)at386-con: 3.8,
+	acsc=``aaffggj\213k\214l\215m\216n\217ooppq\222rrsst\225u\226v\227w\230x\231yyzz{{||}}~~,
+	blink@, rev@, rmso@, rmul@, smso@, smul@, sgr0=,
+	use=at386,

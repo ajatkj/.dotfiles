@@ -1,0 +1,103 @@
+#----------------------------------------------------------------#
+# Name : .profile.addon                                          #
+# Author : Ankit Jain <ajatkj@yahoo.co.in>                       #
+# Desc : Additional changes to bash and ksh shells               #
+#----------------------------------------------------------------#
+# This profile is compatible with bash and ksh
+# ksh version         sh (AT&T Research) 93u+ 2012-08-01
+# bash version        4.2.46 and above
+# Tested on above shell versions
+
+#----- G L O B A L  V A R I A B L E  D E F I N I T I O N -----#
+export SHELLNAME=$(echo ${0#-}) # echo $0 will return name of the shell as -ksh or -bash, #- will remove -
+export TERM=xterm-256color
+
+# Path used by sqlplus for login.sql file
+export SQLPATH=$HOME/.ora
+
+#----- H I S T O R Y  M O D I F I C A T I O N S -----#
+
+export HISTEDIT=vim # Used only in ksh
+export HISTTIMEFORMAT='[%y-%m-%d %H:%M:%S]' # Used only in bash
+
+_histdir=/tmp/$LOGNAME/history
+mkdir -p ${_histdir}
+which who > /dev/null 2>&1
+if [ $? -eq 0 ]; then
+   export HISTFILE=${_histdir}/hist.$(who -am | sed 's#\(.*\)(\(.*\))#\2#g')
+else
+   if [ ! -z "$SSH_CLIENT" ]; then
+      export HISTFILE=${_histdir}/hist.$(echo $SSH_CLIENT | awk '{print $1}')
+   else
+      export HISTFILE=${_histdir}/hist.$(tty | cut -d"/" -f4).$$ 
+   fi
+fi
+#----- C O B O L  R E L A T E D  M O D I F I C A T I O N S -----#
+# Load this before loading colors as this decides the final TERM value
+if [[ $LOGNAME =~ fns ]] && [[ -f $HOME/.profile.cobmods ]]; then  # if it's a BaNCS user
+   source $HOME/.profile.cobmods
+fi
+
+#----- L O A D  C O L O R S -----#
+# Make sure this is done before setting GREP_COLORS and PS1
+_supported_colors=$(tput colors)
+_usecolor=1
+if [ -z $SHELL_COLORS ]; then
+   export SHELL_COLORS=gruvbox
+fi
+if [ ${_supported_colors} -ne 256 ]; then
+   export SHELL_COLORS=default.16
+fi
+_colorfile=$HOME/.colors/${SHELL_COLORS}.colors
+if [ ! -f $_colorfile ]; then
+   export _usecolor=0
+fi
+source $_colorfile 2>/dev/null
+
+#----- C U S T O M I Z E  G R E P -----#
+# Configure grep options & colors
+if [[ $_usecolor == 1 ]]; then
+   #--> 255 color scheme start from 38;5;0 to 38;5;255
+   #--> below color scheme is in synch with gruvbox_mod vim theme
+   _ms="${_coloropt}${_green}"        # non-empty text in a selected line
+   _mc="${_coloropt}${_green}"        # non-empty text in a context line
+   _sl="${_coloropt}${_white}"        # whole selected lines
+   _cx="${_coloropt}${_grey}"         # whole context lines
+   _fn="${_coloropt}${_lightpurple}"  # file names prefixing any content line
+   _ln="${_coloropt}${_blue}"         # line numbers prefixing any content line
+   _bn="32"                           # byte offsets prefixing any content line
+   _se="${_coloropt}${_red1}"         # separators (':','-','--')
+   _mt=""                             # non-empty text in any matching line
+   export GREP_COLORS="ms=$_ms:mc=$_mc:sl=$_sl:cx=$_cx:fn=$_fn:ln=$_ln:bn=$_bn:se=$_se"
+fi
+export GREP_OPTIONS='--color=auto --binary-files=text --directories=skip'
+
+#----- S E T  B A S H  O P T I O N S -----#
+if [[ $SHELLNAME == bash ]] && [[ -f $HOME/.profile.bash.opts ]]; then
+   source $HOME/.profile.bash.opts
+fi
+
+#----- T R A P  L O G O U T -----#
+if [ -f $HOME/.logout ]; then
+   trap '. $HOME/.logout $$; exit' 0
+fi
+
+#----- C U S T O M  F U N C T I O N S -----#
+if [ -f $HOME/.profile.functions ]; then
+   source $HOME/.profile.functions
+fi
+
+#----- D I R E C T O R Y  C O L O R S -----#
+if [ -f $HOME/.dir_colors.$TERM ]; then
+   eval $(dircolors $HOME/.dir_colors.$TERM)
+fi
+
+#----- D E F I N E  A L I A S E S -----#
+if [ -f $HOME/.profile.aliases ]; then
+   source $HOME/.profile.aliases
+fi
+ 
+#----- C U S T O M I Z E  P R I M A R Y  P R O M P T  ( P S 1 ) -----#
+if [ -f $HOME/.profile.prompt ]; then
+   source $HOME/.profile.prompt
+fi

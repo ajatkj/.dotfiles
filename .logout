@@ -1,0 +1,7 @@
+#!/bin/bash
+echo "clearing session files..."
+_ttyfile=/tmp/$LOGNAME/tty.$(tty | cut -d"/" -f4).$1
+if [ -f ${_ttyfile} ]; then
+   echo "deleting $_ttyfile"
+   rm -f ${_ttyfile}
+fi

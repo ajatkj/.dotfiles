@@ -1,0 +1,259 @@
+# Make sure colors are loaded before sourcing this file
+# If not loaded, then use defaults
+if [[ -z $_usecolor ]] || [[ $_usecolor == 0 ]]; then
+   _red=1
+   _red1=1
+   _green=2
+   _green1=2
+   _blue=3
+   _lightpurple=4
+   _lightpurple1=4
+   _purple=6
+   _purple1=6
+   _purple2=6
+   _grey=7
+   _white=15
+fi
+if [ ! -z $KSH_VERSION ]; then
+   _shell=ksh
+fi
+if [ ! -z $BASH_VERSION ]; then
+   _shell=bash
+fi
+
+# Session file for storing temporary session details
+mkdir -p /tmp/$LOGNAME
+_ttyfile=/tmp/$LOGNAME/tty.$(tty | cut -d"/" -f4).$$
+if [ -f $_ttyfile ]; then
+   rm -f $_ttyfile
+fi
+touch $_ttyfile
+
+# Hack: to show ip address for regions using same name
+# Add "all" to below array if you want to show ip for all users
+_ipusers=(dockeradm ankitj root kubenode all)
+_showip=no
+for _user in "${_ipusers[@]}"; do
+   if [ $_user == "all" -o $LOGNAME == "$_user" ]; then
+      _showip=yes
+   fi
+done
+
+case $_shell in 
+    ksh) export PS1="\$(_prompt)" ;;
+    bash) export PROMPT_COMMAND=_prompt ;;
+    *) break;;
+esac
+
+# Configure window title for variour programs
+_tstart="\033]0;"
+_tend="\007"
+# Using different escape sequences for ksh since it was giving issues
+# for folders starting with a number
+if [ $_shell == ksh ]; then
+   _s="\0001"
+   _e="\0002"
+else
+   _s="\001"
+   _e="\002"
+fi
+_RED="${_s}$(tput setaf ${_red})${_e}"
+_RED1="${_s}$(tput setaf ${_red1})${_e}"
+_GREEN="${_s}$(tput setaf ${_green})${_e}"
+_GREEN1="${_s}$(tput setaf ${_green1})${_e}"
+_BLUE="${_s}$(tput setaf ${_blue})${_e}"
+_RESET="${_s}$(tput sgr0)${_e}"
+_LPURPLE="${_s}$(tput setaf ${_lightpurple})${_e}"   # Don't use \[ & \] as these are not escape 
+_LPURPLE1="${_s}$(tput setaf ${_lightpurple1})${_e}"   # Don't use \[ & \] as these are not escape 
+_PURPLE="${_s}$(tput setaf ${_purple})${_e}"         # sequences and will be displayed in echo statement
+_PURPLE1="${_s}$(tput setaf ${_purple1})${_e}"
+_PURPLE2="${_s}$(tput setaf ${_purple2})${_e}"
+_WHITE="${_s}$(tput setaf ${_white})${_e}"
+_REDB="${_s}$(tput setab ${_red})${_e}"
+
+_COLOR0="${_GREEN}"  # Color for opening bracket of the prompt
+_COLOR1="${_GREEN}"  # Color for first part of prompt, changes dynamically
+_COLOR2="${_BLUE}"   # Color for second part of the prompt
+_COLOR3="${_WHITE}"  # Color for the seperator
+_COLOR4="${_WHITE}"  # Color for the prompt
+_COLOR5="${_GREEN1}" # Color for GIT branch
+_COLORB0="${_REDB}"  # Background color for root user
+
+# No need to put below inside _prompt function, do this only once when profile is loaded
+# GET CURRENT IP ADDRESS
+which ip > /dev/null 2>&1
+if [ $? -eq 0 ]; then
+   _ip=$(ip route get 1 | awk '{print $NF;exit}' | cut -d"." -f4)
+else
+   which ifconfig > /dev/null 2>&1
+   if [ $? -eq 0 ]; then
+      _ip=$(ifconfig eth0 | grep 'inet ' | awk '{print $2}' | cut -d"." -f4)
+   else
+      _showip=no
+   fi
+fi
+# GET HOSTNAME IF AVAILABLE
+_logname=${LOGNAME}
+which hostname > /dev/null 2>&1 # show host name if available
+if [ $? -eq 0 ]; then
+   _hostname=$(hostname)
+else
+   _hostname=
+   if [ ! -z "${_ip}" -a ${_showip} == yes ]; then # show ip if applicable only if hostname is not available
+      _logname="$_logname(${_ip})"
+   fi
+fi
+# GET CURRENT USER ID
+_uid=$(id -u)
+function _prompt
+{
+    _exitcode=$?                   # This needs to be first 
+
+    # SET WINDOW TITLE
+    if [ -z $_hostname ]; then
+       _windowtitle="${_logname} - $PWD" # This needs to defined inside _prompt function
+                                         # so that it gets excuted on every prompt change
+    else
+       _windowtitle="${_logname}@${_hostname} - $PWD" 
+    fi
+
+    echo -ne "${_tstart}${_windowtitle}${_tend}" 
+
+    if [ -f ${_ttyfile} ]; then
+       source ${_ttyfile}          # _ttyfile is in the format var=value, 
+    fi                             # source the file to load all the saved variables
+
+    # CHECK IF GIT REPO
+    _gitremote=$(git remote 2>/dev/null | tr -d '\n')
+
+    # DO SOMETHING ON PATH CHANGE OR IF THIS IS A GIT REPO
+    _currpath="$(pwd)"
+    echo "_prevpath='${_currpath}'" > $_ttyfile # save current path in the _ttyfile
+    if [ "${_prevpath}" != "${_currpath}" -o ! -z "${_gitremote}" ]; then
+       _msg=""
+       # Display host name first, if available
+       if [ ! -z $_hostname ]; then
+          _msg+="${_LPURPLE1}"
+          _msg+="host: $_hostname, "
+       fi
+       _msg+="${_LPURPLE}"          # Display 
+       _msg+="pwd: "                # path 
+       _msg+="${_PURPLE}"           #
+       _msg+="${_currpath}"         # change
+
+       # Display 'readonly'
+       _dir=($(ls -ld . | awk '{print $1" "$3" "$4}'))  # Get
+       _fperm="${_dir[0]}"                              # current 
+       _fowner="${_dir[1]}"                             # directory
+       _fgroup="${_dir[2]}"                             # details
+       _owner=$(id -nu)      # Owner
+       _group=$(id -ng)      # Group
+       if [ "${_fowner}" == "${_owner}" ]; then
+          _perm="${_fperm:1:3}"
+       elif [ "${_fgroup}" == "${_group}" ]; then
+          _perm="${_fperm:4:3}"
+       else
+          _perm="${_fperm:7:3}"
+       fi
+       if [ "${_perm:1:1}" != "w" -a "${_uid}" -ne 0 ]; then       
+          _msg+="${_PURPLE1}"
+          _msg+=" (readonly)"
+       fi
+       # Display GIT remote repository name
+       _gitremote=$(git remote 2>/dev/null | tr -d '\n')
+       if [ ! -z "$_gitremote" ]; then
+          _msg+=", "
+          _msg+="${_PURPLE1}"
+          _msg+="git: "
+          _msg+="${_PURPLE2}"
+          _msg+="$_gitremote"
+       fi
+       _msg+="${_RESET}"
+       echo -e "${_msg}"
+    fi
+
+    # GET GIT BRANCH
+    _gitprompt=""
+    _gitbr=$(git rev-parse --abbrev-ref HEAD 2>/dev/null | tr -d '\n')
+
+    if [ ! -z "${_gitbr}" ]; then
+       _diff=$(git diff)
+       if [ ! -z "${_diff}" ]; then
+          _gitprompt="${_gitbr}*"
+          _COLOR5=${_RED1} # Color for GIT branch - uncommitted
+       else
+          _gitprompt="${_gitbr}"
+          _COLOR5=${_GREEN1} # Color for GIT branch - committed
+       fi
+    fi 
+
+    # CUSTOMIZE PROMPT
+
+    # Change below variables as required
+    _part1=${_logname}
+    if [ "$PWD" == $HOME ]; then
+       _part2=" ~ "
+    else
+       _part2="$(basename "${PWD}")"
+    fi
+    _ksherr='(!!)'  # Use extra ! to escape ! for ksh
+    _basherr='(!)'  # Bash doesn't require escaping !
+    _open=''
+    if [ $_uid -eq 0 ]; then
+       _close='#'
+    elif [ ! -z $_gitprompt ]; then
+         _close='>'
+    else
+       _close='$'
+    fi
+    _separator='|'
+
+    if [ ${_exitcode} -eq 0 ]; then
+       _errtext=""
+       _COLOR1="${_GREEN}"
+    else
+       if [ ${_shell} == bash ]; then
+          _errtext=${_basherr}
+       fi 
+       if [ ${_shell} == ksh ]; then
+          _errtext=${_ksherr}
+       fi 
+       if [ ${_uid} -eq 0 ]; then
+          _COLOR1="${_WHITE}"
+       else
+          _COLOR1="${_RED}"
+       fi
+    fi
+
+    PS1=""                      # Reset prompt variable
+    PS1+="${_COLOR0}"           # Color
+    PS1+="${_open}"             # Opening bracket
+    PS1+="${_COLOR1}"           # Color
+    PS1+="${_errtext}"          # Optional error indicator
+    if [ ${_uid} -eq 0 ]; then  
+       PS1+="${_COLORB0}"       # Background color for root user
+       PS1+="${_COLOR3}"        # Foreground color for root user
+       PS1+="${_part1}"         # Part 1
+       PS1+="${_RESET}"         # Reset background color
+    else
+       PS1+="${_part1}"         # Part 1
+    fi
+    if [ ! -z "${_gitprompt}" ]; then
+       PS1+="${_COLOR3}"        # Seperator color
+       PS1+="${_separator}"     # Separator
+       PS1+="${_COLOR5}"        # Git branch color
+       PS1+="${_gitprompt}"     # Git branch
+    fi
+    PS1+="${_COLOR3}"           # Seperator color
+    PS1+="${_separator}"        # Separator
+    PS1+="${_COLOR2}"           # Color
+    PS1+="${_part2}"            # Part 2
+    PS1+="${_COLOR4}"           # Color
+    PS1+="${_close}"            # Prompt/Closing bracket
+    PS1+="${_RESET}"            # Reset all colors
+    case ${_shell} in 
+        ksh) echo -e $PS1;;
+        bash) export PS1;;
+        *) echo -e $PS1;;
+    esac
+}

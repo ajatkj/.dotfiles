@@ -1,0 +1,19 @@
+shopt -s histappend 
+shopt -s histreedit 
+shopt -s histverify
+
+alias debug="set -o nounset; set -o xtrace"
+
+# Report the status of terminated background jobs immediately, rather than before the next primary prompt.
+set -o notify  
+#The effect is as if the shell command 'IGNOREEOF=10' had been executed 
+set -o ignoreeof
+
+# Enable options:
+shopt -s cdable_vars
+shopt -s checkhash
+shopt -s checkwinsize
+shopt -s sourcepath
+shopt -s no_empty_cmd_completion
+shopt -s cmdhist
+shopt -s extglob

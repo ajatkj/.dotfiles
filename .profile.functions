@@ -1,0 +1,84 @@
+#----- C U S T O M  F U N C T I O N S -----#
+up() {
+  for D in $(seq 1 $1);
+     do
+       cd ..
+     done
+}
+# Swap 2 filenames around, if they exist (from Uzi's bashrc). 
+swap() { 
+    TMPFILE=tmp.$$
+
+    [ $# -ne 2 ] && echo "swap: 2 arguments needed" && return 1
+    [ ! -e $1 ] && echo "swap: $1 does not exist" && return 1
+    [ ! -e $2 ] && echo "swap: $2 does not exist" && return 1
+
+    mv "$1" $TMPFILE
+    mv "$2" "$1"
+    mv $TMPFILE "$2"
+}
+
+backup() { 
+    [ $# -eq 0 ] && echo "backup: filename needed" && return 1
+    [ ! -e $1 ] && echo "backup: $1 does not exist" && return 1
+
+    if [ ! -z "$2" ]; then
+       _suffix=$2
+    else 
+       _suffix="bk.$(date +'%Y%m%d')"
+    fi
+
+    cp -i $1 $1.$_suffix
+}     
+
+# Handy Extract Program
+extract() {
+    if [ -f $1 ] ; then
+        case $1 in
+            *.tar.bz2)   tar xvjf $1     ;;
+            *.tar.gz)    tar xvzf $1     ;;
+            *.bz2)       bunzip2 $1      ;;
+            *.rar)       unrar x $1      ;;
+            *.gz)        gunzip $1       ;;
+            *.tar)       tar xvf $1      ;;
+            *.tbz2)      tar xvjf $1     ;;
+            *.tgz)       tar xvzf $1     ;;
+            *.zip)       unzip $1        ;;
+            *.Z)         uncompress $1   ;;
+            *.7z)        7z x $1         ;;
+            *)           echo "'$1' cannot be extracted via >extract<" ;;
+        esac
+    else
+        echo "'$1' is not a valid file!"
+    fi
+}
+
+envv(){
+    echo -e "${1//:/\\n}"
+}
+
+lsi(){
+   patf=""
+   for pat in "$@"; do
+      if [ "$patf" != "" ]; then
+         patf=$patf"|"$pat
+      else
+         patf=$pat"\>"
+      fi
+   done
+   ls $(ls -p | grep -v / | grep -v -E $patf)
+   patf=""
+}
+
+lsit(){
+   patf=""
+   for pat in "$@"; do
+      if [ "$patf" != "" ]; then
+         patf=$patf"|"$pat
+      else
+         patf=$pat"\>"
+      fi
+   done
+   ls -lrt $(ls -p | grep -v / | grep -v -E $patf)
+   patf=""
+}

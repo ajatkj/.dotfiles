@@ -1,0 +1,47 @@
+#----- D E F I N E  A L I A S E S -----#
+if [ -z $SHELLNAME ]; then
+   export SHELLNAME=$(echo ${0#-}) # echo $0 will return name of the shell as -ksh or -bash, #- will remove -
+fi
+alias ls='ls --color=auto'
+alias lls='ls -lrSh'
+alias lt='ls -lrtd $(ls -rt | tail -20)' # maintain directory colors
+alias lth='ls -lrthd $(ls -rt | tail -20)' # maintain directory colors
+alias l.='ls -ld .* '
+alias lld='ls -ld */'
+alias lg='ls -lrt --group-directories-first'
+alias vi='vim'
+alias ..='cd ..'
+alias ...='cd ../..'
+alias df='df -h'
+alias :q=exit
+alias :q!=exit
+
+alias path='echo -e ${PATH//:/\\n}' # display path variable in readable format
+alias now='date +"%T"'
+alias nowtime=now
+alias nowdate='date +"%d-%m-%Y"'
+
+alias ports='netstat -tulanp' # show open ports
+
+alias reload=". ${_profile} && echo 'Profile (${_profile}) reloaded'"
+
+alias cpuinfo='lscpu' # Get server cpu info
+
+alias profile="vim ${_profile}"
+
+alias ed='vim'
+
+# Configure window title for variour programs
+
+_tstart="\033]0;"
+_tend="\007"
+ 
+alias sqlplus='echo -ne "${_tstart}$LOGNAME - sqlplus@$ORACLE_SID${_tend}";sqlplus'
+alias sftp='echo -ne "${_tstart}$LOGNAME - sftp${_tend}";sftp'
+
+if [ $SHELLNAME == ksh ]; then
+   alias fc='hist'
+fi
+if [ $SHELLNAME == bash ]; then
+   alias hist='fc'
+fi

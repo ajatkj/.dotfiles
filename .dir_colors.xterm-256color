@@ -1,0 +1,222 @@
+# Configuration file for the color ls utility
+# Synchronized with coreutils 8.5 dircolors
+# This file goes in the /etc directory, and must be world readable.
+# You can copy this file to .dir_colors in your $HOME directory to override
+# the system defaults.
+
+# COLOR needs one of these arguments: 'tty' colorizes output to ttys, but not
+# pipes. 'all' adds color characters to all output. 'none' shuts colorization
+# off. Ignored by GNU dircolors (check using dircolors --help)
+COLOR all
+
+# Extra command line options for ls go here.
+# Basically these ones are:
+#  -F = show '/' for dirs, '*' for executables, etc.
+#  -T 0 = don't trust tab spacing when formatting ls output.
+# Ignored by GNU dircolors (check using dircolors --help)
+OPTIONS -F -T 0
+
+# Below, there should be one TERM entry for each termtype that is colorizable
+TERM xterm-256color
+
+# EIGHTBIT, followed by '1' for on, '0' for off. (8-bit output)
+# Ignored by GNU dircolors (check using dircolors --help)
+EIGHTBIT 1
+
+# Below are the color init strings for the basic file types. A color init
+# string consists of one or more of the following numeric codes:
+# Attribute codes:
+# 00=none 01=bold 04=underscore 05=blink 07=reverse 08=concealed
+# Text color codes:
+# 30=black 31=red 32=green 33=yellow 34=blue 35=magenta 36=cyan 37=white
+# Background color codes:
+# 40=black 41=red 42=green 43=yellow 44=blue 45=magenta 46=cyan 47=white
+#NORMAL 00	# no color code at all
+#FILE 00	# normal file, use no color at all
+#RESET 0 # reset to "normal" color
+#DIR 00;36	# directory
+DIR 38;5;142
+LINK 38;5;136 # symbolic link (If you set this to 'target' instead of a
+		# numerical value, the color is as for the file pointed to.)
+MULTIHARDLINK 00	# regular file with more than one link
+FIFO 40;33	# pipe
+SOCK 00;35	# socket
+DOOR 00;35	# door
+BLK 40;33;01	# block device driver
+CHR 40;33;01	# character device driver
+ORPHAN 40;31;01  # symlink to nonexistent file, or non-stat'able file
+MISSING 00;05;37;41 # ... and the files they point to
+SETUID 37;41	# file that is setuid (u+s)
+SETGID 30;43	# file that is setgid (g+s)
+CAPABILITY 30;41	# file with capability
+STICKY_OTHER_WRITABLE 30;42 # dir that is sticky and other-writable (+t,o+w)
+OTHER_WRITABLE 34;42 # dir that is other-writable (o+w) and not sticky
+STICKY 37;44	# dir with the sticky bit set (+t) and not other-writable
+
+# This is for files with execute permission:
+EXEC 38;5;214
+
+# List any file extensions like '.gz' or '.tar' that you would like ls
+# to colorize below. Put the extension, a space, and the color init string.
+# (and any comments you want to add after a '#')
+# executables (bright green)
+#.cmd 00;32
+#.exe 00;32
+#.com 00;32
+#.btm 00;32
+#.bat 00;32
+#.sh  00;32
+#.csh 00;32
+
+# archives or compressed (bright red)
+.tar 38;5;167
+.tgz 38;5;167
+.arc 38;5;167
+.arj 38;5;167
+.taz 38;5;167
+.lha 38;5;167
+.lz4 38;5;167
+.lzh 38;5;167
+.lzma 38;5;167
+.tlz 38;5;167
+.txz 38;5;167
+.tzo 38;5;167
+.t7z 38;5;167
+.zip 38;5;167
+.z   38;5;167
+.Z   38;5;167
+.dz  38;5;167
+.gz  38;5;167
+.lrz 38;5;167
+.lz  38;5;167
+.lzo 38;5;167
+.xz  38;5;167
+.bz2 38;5;167
+.bz  38;5;167
+.tbz 38;5;167
+.tbz2 38;5;167
+.tz  38;5;167
+.deb 38;5;167
+.rpm 38;5;167
+.jar 38;5;167
+.war 38;5;167
+.ear 38;5;167
+.sar 38;5;167
+.rar 38;5;167
+.alz 38;5;167
+.ace 38;5;167
+.zoo 38;5;167
+.cpio 38;5;167
+.7z  38;5;167
+.rz  38;5;167
+.cab 38;5;167
+
+.dmp 38;5;218
+.COB 38;5;37
+.PCO 38;5;37
+.LST 38;5;37
+.int 38;5;241
+.idy 38;5;243
+.sql 38;5;114
+.md 38;5;114
+.c 38;5;109
+.h 38;5;109
+.cpp 38;5;109
+.card 38;5;183
+.tag 38;5;166
+.mts 38;5;188
+.vim 38;5;227
+.out 38;5;218
+
+# image formats (magenta)
+.jpg 00;35
+.jpeg 00;35
+.gif 00;35
+.bmp 00;35
+.pbm 00;35
+.pgm 00;35
+.ppm 00;35
+.tga 00;35
+.xbm 00;35
+.xpm 00;35
+.tif 00;35
+.tiff 00;35
+.png 00;35
+.svg 00;35
+.svgz 00;35
+.mng 00;35
+.pcx 00;35
+.mov 00;35
+.mpg 00;35
+.mpeg 00;35
+.m2v 00;35
+.mkv 00;35
+.webm 00;35
+.ogm 00;35
+.mp4 00;35
+.m4v 00;35
+.mp4v 00;35
+.vob 00;35
+.qt  00;35
+.nuv 00;35
+.wmv 00;35
+.asf 00;35
+.rm  00;35
+.rmvb 00;35
+.flc 00;35
+.avi 00;35
+.fli 00;35
+.flv 00;35
+.gl 00;35
+.dl 00;35
+.xcf 00;35
+.xwd 00;35
+.yuv 00;35
+.cgm 00;35
+.emf 00;35
+
+# http://wiki.xiph.org/index.php/MIME_Types_and_File_Extensions
+.axv 00;35
+.anx 00;35
+.ogv 00;35
+.ogx 00;35
+
+# audio formats (cyan)
+.aac 00;36
+.au 00;36
+.flac 00;36
+.mid 00;36
+.midi 00;36
+.mka 00;36
+.mp3 00;36
+.mpc 00;36
+.ogg 00;36
+.ra 00;36
+.wav 00;36
+
+# http://wiki.xiph.org/index.php/MIME_Types_and_File_Extensions
+.axa 00;36
+.oga 00;36
+.spx 00;36
+.xspf 00;36
+
+# colorize text documents (brown)
+.txt 00;33
+.csv 38;5;223
+.prt 38;5;221
+.lst 38;5;222
+.patch 00;33
+.diff 00;33
+.log 38;5;218
+.htm 38;5;107
+.html 38;5;107
+.shtml 38;5;107
+.xml 38;5;110
+.htc 38;5;116
+.css 38;5;131
+
+.dll 38;5;138
+
+# colorize yml files (shade of purple)
+.yaml 38;5;219
+.yml 38;5;219
